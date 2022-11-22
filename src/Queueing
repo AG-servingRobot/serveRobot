@@ -1,0 +1,107 @@
+package Algorithm;
+
+
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Timer;
+import java.util.Arrays;
+
+public class Queueing {
+
+	private static Queue<String> Queue = new LinkedList<>();
+	private static Queue<String> Temp_Queue = new LinkedList<>();
+	private int DeadLine[];
+	
+	//kind of priority
+	//'.' is Delimiter to robot go to where table
+	//ex) 'setting.5' is robot should go table number5 to do 'setting' 
+	private String refull ="refull.";
+	private String setting ="setting.";
+	private String serving ="serving.";
+	private String clean ="clean.";
+	
+
+	public static void main(String args)
+	{
+
+	}
+	
+	public String priority(){	
+		for(int i=0;i<6;i++)//we have 6 table
+		{
+			//time is temporary variable
+			int time=0;//timer is produce by other class when customer seat
+			DeadLine[i] = time;
+			
+		}
+		Arrays.sort(DeadLine);//sort aray to ascending
+		
+		
+		int dish=0;//dish is temporary variable
+		if(dish == 0)
+		{
+			if(DeadLine[0]>=9*60000)//if we set 9 minutes deadline time that 
+			{
+				for(int i=0;i<DeadLine.length;i++)
+				{
+					//delete how?
+					tempQueue();
+					Queue.add();
+					retempQueue();
+				}
+			}
+			
+			
+			tempQueue();
+			Queue.add(refull+0);
+			retempQueue();
+			
+			
+		}
+		
+		return null;
+	}
+	
+	//input where the main class of project
+	public void init(String operation, int table){
+
+		Queue.add(operation+table);
+	}
+	
+	
+	public Map out() throws Exception {
+		Map<String, Integer> output = new HashMap<>();
+		
+		String opr;
+		int table;
+		
+		//we return operation and table number to other class of same project
+		opr = Queue.poll();
+		table = Integer.parseInt(opr.substring(opr.indexOf('.')+1));
+		opr = opr.substring(0,opr.indexOf('.'));
+		output.put(opr, table);
+		Object Exception;
+		
+		if(table >=0 && table<7)
+			return output;
+		else
+			throw new Exception("incorrect output from out ");
+	}
+	
+	public static void tempQueue()
+	{
+		for(int i=0;i<Queue.size();i++)
+			Temp_Queue.add(Queue.poll());
+		
+	}
+	public static void retempQueue()
+	{
+		for(int i=0;i<Temp_Queue.size();i++)
+			Queue.add(Temp_Queue.poll());
+	}
+
+}
