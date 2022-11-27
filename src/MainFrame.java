@@ -1,4 +1,3 @@
-
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -32,8 +31,8 @@ public class MainFrame extends JFrame implements Runnable, ActionListener {
 	public static boolean[] haveToClean = new boolean[6];
 	public static String[] robot_doing = new String[] { "", "" };
 	public static int[] robot_table = new int[2];
-
-	public static void main(String args[]) throws Exception { // out()�뜝�럩諭� �뜝�럩留꾢뜝�럥�돵 throws Exception 占쎈퉲�겫�룞�삕
+	public static int running_Robot;
+	public static void main(String args[]) throws Exception { // out()占쎈쐻占쎈윪獄�占� 占쎈쐻占쎈윪筌띻쐼�쐻占쎈윥占쎈뤅 throws Exception �뜝�럥�돯占쎄껀占쎈짗占쎌굲
 
 		MainFrame frame = new MainFrame();
 		// MapPane mapPane = new MapPane();
@@ -55,13 +54,10 @@ public class MainFrame extends JFrame implements Runnable, ActionListener {
 		while (true) {
 			while (true)// check robot state
 			{
-				System.out.println(queue.dish);
-				if (mp.isFree() != 0 && queue.state() == 0)
+				
+				if (mp.isFree() != 0 && Queueing.state() == 0)
 					break;
-				if (mp.isFree() != 0 && queue.state() == 0)
-					break;
-				Thread.sleep(1000);
-//				System.out.println();
+				Thread.sleep(100);
 			}
 
 			visit_xy = null;
@@ -82,32 +78,30 @@ public class MainFrame extends JFrame implements Runnable, ActionListener {
 			robot1 = mp.getInfo(1);
 			robot2 = mp.getInfo(2);
 
-			robot1 = mp.getInfo(1);
-			robot2 = mp.getInfo(2);
-
-
+			System.out.println(running_Robot);
 			if (temp_str[0].equals("serving") || temp_str[0].equals("setting"))// if "serving" or "settting"
 			{
 				if (temp_str[0].equals("setting"))// if "setting"
 				{
-					// �몢 濡쒕큸 以� �늻媛� �븷 吏�
+					// 占쎈あ 嚥≪뮆�겦 餓ο옙 占쎈듇揶쏉옙 占쎈막 筌욑옙
 					dj.init(1, robot1, robot2, working_robot);
 
 					dest = dj.dest_num();
 					/*
 					 * for(int i = 0; i < dj.list_result().length; i++)
 					 * System.out.println(dj.list_result()[i][0] + "," + dj.list_result()[i][1]);
-					 * System.out.println(dest); System.out.println(dj.workRobot());
+					 * System.out.println(dest); System.out.println(running_Robot);
 					 */
 					// System.out.println(dj.list_result()[0]);()
 					visit_xy = dj.list_result();
-					mp.setRobot(dj.workRobot(), visit_xy, dest);
+					running_Robot = dj.workRobot();
+					mp.setRobot(running_Robot, visit_xy, dest);
 
-					if (dj.workRobot() == 1) {
+					if (running_Robot == 1) {
 						dj.init(node, setting, robot2, 1);
 						robot_doing[0] = temp_str[0];
 						robot_table[0] = Integer.parseInt(temp_str[1]);
-					} else if (dj.workRobot() == 2) {
+					} else if (running_Robot == 2) {
 						dj.init(node, robot1, setting, 2);
 						robot_doing[1] = temp_str[0];
 						robot_table[1] = Integer.parseInt(temp_str[1]);
@@ -115,36 +109,38 @@ public class MainFrame extends JFrame implements Runnable, ActionListener {
 
 					while (true) {
 						Queueing.priority();
-						if (mp.getInfo(dj.workRobot())[0] == setting[0]
-								&& mp.getInfo(dj.workRobot())[1] == setting[1])
+						if (mp.getInfo(running_Robot)[0] == setting[0]
+								&& mp.getInfo(running_Robot)[1] == setting[1])
 							break;
-						System.out.println(mp.getInfo(dj.workRobot())[0]);
+						Thread.sleep(10);
 					}
+					Queueing.dish -=1;
 					visit_xy = null;
 					visit_xy = dj.list_result();
 					dest = dj.dest_num();
-					mp.setRobot(dj.workRobot(), visit_xy, dest);
+					mp.setRobot(running_Robot, visit_xy, dest);
 
 				} else if (temp_str[0].equals("serving")) // if "serving"
 				{
-					// �몢 濡쒕큸 以� �늻媛� �븷 吏�
+					// 占쎈あ 嚥≪뮆�겦 餓ο옙 占쎈듇揶쏉옙 占쎈막 筌욑옙
 					dj.init(3, robot1, robot2, working_robot);
 
 					dest = dj.dest_num();
 					/*
 					 * for(int i = 0; i < dj.list_result().length; i++)
 					 * System.out.println(dj.list_result()[i][0] + "," + dj.list_result()[i][1]);
-					 * System.out.println(dest); System.out.println(dj.workRobot());
+					 * System.out.println(dest); System.out.println(running_Robot);
 					 */
 					// System.out.println(dj.list_result()[0]);()
 					visit_xy = dj.list_result();
-					mp.setRobot(dj.workRobot(), visit_xy, dest);
+					running_Robot = dj.workRobot();
+					mp.setRobot(running_Robot, visit_xy, dest);
 
-					if (dj.workRobot() == 1) {
+					if (running_Robot == 1) {
 						dj.init(node, serving, robot2, 1);
 						robot_doing[0] = temp_str[0];
 						robot_table[0] = Integer.parseInt(temp_str[1]);
-					} else if (dj.workRobot() == 2) {
+					} else if (running_Robot == 2) {
 						dj.init(node, robot1, serving, 2);
 						robot_doing[1] = temp_str[0];
 						robot_table[1] = Integer.parseInt(temp_str[1]);
@@ -152,38 +148,42 @@ public class MainFrame extends JFrame implements Runnable, ActionListener {
 
 					while (true) {
 
-						if (mp.getInfo(dj.workRobot())[0] == serving[0]
-								&& mp.getInfo(dj.workRobot())[1] == serving[1])
+						if (mp.getInfo(running_Robot)[0] == serving[0]
+								&& mp.getInfo(running_Robot)[1] == serving[1])
 							break;
-						System.out.println(mp.getInfo(dj.workRobot())[0]);
+						Thread.sleep(10);
+
+						System.out.println(mp.getInfo(running_Robot)[0]);
 					}
 
 					visit_xy = null;
 					visit_xy = dj.list_result();
 					dest = dj.dest_num();
-					mp.setRobot(dj.workRobot(), visit_xy, dest);
+					mp.setRobot(running_Robot, visit_xy, dest);
 				}
 
 			} else if (temp_str[0].equals("refull"))// if refull
 			{
-				// �몢 濡쒕큸 以� �늻媛� �븷 吏�
+				// 占쎈あ 嚥≪뮆�겦 餓ο옙 占쎈듇揶쏉옙 占쎈막 筌욑옙
 				dj.init(3, robot1, robot2, working_robot);
 
 				dest = dj.dest_num();
+				
 				/*
 				 * for(int i = 0; i < dj.list_result().length; i++)
 				 * System.out.println(dj.list_result()[i][0] + "," + dj.list_result()[i][1]);
-				 * System.out.println(dest); System.out.println(dj.workRobot());
+				 * System.out.println(dest); System.out.println(running_Robot);
 				 */
 				// System.out.println(dj.list_result()[0]);()
 				visit_xy = dj.list_result();
-				mp.setRobot(dj.workRobot(), visit_xy, dest);
-
-				if (dj.workRobot() == 1) {
+				running_Robot = dj.workRobot();
+				mp.setRobot(running_Robot, visit_xy, dest);
+				System.out.println(running_Robot);
+				if (running_Robot == 1) {
 					dj.init(1, serving, robot2, 1);
 					robot_doing[0] = temp_str[0];
 					robot_table[0] = Integer.parseInt(temp_str[1]);
-				} else if (dj.workRobot() == 2) {
+				} else if (running_Robot == 2) {
 					dj.init(1, robot1, serving, 2);
 					robot_doing[1] = temp_str[0];
 					robot_table[1] = Integer.parseInt(temp_str[1]);
@@ -191,31 +191,34 @@ public class MainFrame extends JFrame implements Runnable, ActionListener {
 
 				while (true) {
 
-					if (mp.getInfo(dj.workRobot())[0] == serving[0]
-							&& mp.getInfo(dj.workRobot())[1] == serving[1])
+					if (mp.getInfo(running_Robot)[0] == serving[0]
+							&& mp.getInfo(running_Robot)[1] == serving[1])
 						break;
-					System.out.println(mp.getInfo(dj.workRobot())[0]);
+					Thread.sleep(10);
+
+					System.out.println(mp.getInfo(running_Robot)[0]);
 				}
 
 				visit_xy = null;
 				visit_xy = dj.list_result();
 				dest = dj.dest_num();
-				mp.setRobot(dj.workRobot(), visit_xy, dest);
+				mp.setRobot(running_Robot, visit_xy, dest);
 
 			} else if (temp_str[0].equals("clean"))// if clean
 			{
 				dj.init(node, robot1, robot2, working_robot);
-				if (dj.workRobot() == 1) {
+				running_Robot = dj.workRobot();
+				if (running_Robot == 1) {
 					robot_doing[0] = temp_str[0];
 					robot_table[0] = Integer.parseInt(temp_str[1]);
-				} else if (dj.workRobot() == 2) {
+				} else if (running_Robot == 2) {
 					robot_doing[1] = temp_str[0];
 					robot_table[1] = Integer.parseInt(temp_str[1]);
 				}
 				dest = dj.dest_num();
 				// don't need node?
 				visit_xy = dj.list_result();
-				mp.setRobot(dj.workRobot(), visit_xy, dest);
+				mp.setRobot(running_Robot, visit_xy, dest);
 
 			}
 		}
@@ -226,17 +229,17 @@ public class MainFrame extends JFrame implements Runnable, ActionListener {
 public void init() {
 	// initialize GUI
 
-		// 嶺뚢댙�삕 嶺뚣끉裕뉛옙爰뽩뜝�럡苡욜뼨�먯삕 �뜝�럡�맟�뜝�럩�젧(嶺뚮씭踰딉옙逾�
-		// �뜝�럥�닱嶺뚣�볦뒦占쎌쟽�뜝�럩�몠嶺뚯쉻�삕�뜝�럥利꿨슖�댙�삕)
-		double magn = 1080 / Toolkit.getDefaultToolkit().getScreenSize().getHeight(); // �뜝�럩�꼨嶺뚮∥占썲첎�닂�삕占쎈첎
+		// 癲ル슓�뙔占쎌굲 癲ル슔�걠獒뺣돍�삕�댆戮⑸쐻占쎈윞�떋�슌堉⑨옙癒��굲 占쎈쐻占쎈윞占쎈쭫占쎈쐻占쎈윪占쎌젳(癲ル슢�뵯甕곕뵃�삕�억옙
+		// 占쎈쐻占쎈윥占쎈떛癲ル슔占쎈낌�뮚�뜝�럩�읇占쎈쐻占쎈윪占쎈첓癲ル슣�돸占쎌굲占쎈쐻占쎈윥筌앷엥�뒙占쎈뙔占쎌굲)
+		double magn = 1080 / Toolkit.getDefaultToolkit().getScreenSize().getHeight(); // 占쎈쐻占쎈윪占쎄섀癲ル슢�닪�뜝�뜴泥롳옙�땬占쎌굲�뜝�럥泥�
 		double minX = 1000 * magn;
 		double minY = 722 * magn; // (580+40+60)+42
 		setMinimumSize(new Dimension((int) minX, (int) minY));
 		// setResizable(false);
-		// setLocationRelativeTo(null); //�뤆�룊�삕�뜝�럩�뮧�뜝�럥�몥�뜝�럥�뱺 嶺뚢댙�삕 �뜝�럩紐쏃뇦猿볦삕
+		// setLocationRelativeTo(null); //占쎈쨬占쎈즸占쎌굲占쎈쐻占쎈윪占쎈�㏆옙�쐻占쎈윥占쎈ぅ占쎈쐻占쎈윥占쎈군 癲ル슓�뙔占쎌굲 占쎈쐻占쎈윪筌륁룂�눇�뙼蹂��굲
 		// System.out.println("Frame Size = " + getSize());
 
-		// �뜝�럩�쓧嶺뚳퐦�삕 �뜝�럩�꼨嶺뚮〕�삕
+		// 占쎈쐻占쎈윪占쎌벁癲ル슪�맔占쎌굲 占쎈쐻占쎈윪占쎄섀癲ル슢�뺧옙�굲
 		GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice device = graphics.getDefaultScreenDevice();
 		device.setFullScreenWindow(this);
@@ -249,15 +252,15 @@ public void init() {
 		emptyPane1 = new JPanel();
 		emptyPane2 = new JPanel();
 
-		// �뜝�럥六삥뤆�룊�삕 �뜝�럩諭썲뜝�럩�뮡�뼨�먯삕
+		// 占쎈쐻占쎈윥筌묒궏琉놅옙猷딉옙�굲 占쎈쐻占쎈윪獄��뜴�쐻占쎈윪占쎈�∽옙堉⑨옙癒��굲
 		timeTestLabel = new JLabel("00 : 00");
 		emptyPane1.add(timeTestLabel);
 		new Thread(this).start();
 
-		// guest �뜝�럩�젧�솻洹⑥삕 �뜝�럥援뜹뜝�럥�꽑�뤆�룊�삕 �뜝�럩�겱占쎈뎨�뜝占� �뜝�럡臾멨뜝�럡�뎽
+		// guest 占쎈쐻占쎈윪占쎌젳占쎌녃域밟뫁�굲 占쎈쐻占쎈윥�뤃�쑚�쐻占쎈윥占쎄퐨占쎈쨬占쎈즸占쎌굲 占쎈쐻占쎈윪占쎄껑�뜝�럥�렓占쎈쐻�뜝占� 占쎈쐻占쎈윞�눧硫⑤쐻占쎈윞占쎈렰
 		guest = new Guest[6];
 
-		// �뜝�럥占썲뜝�럥六� �뜝�럩肉��뜝�럩�궋 �뵓怨뚯뫓占쎈괏
+		// 占쎈쐻占쎈윥�뜝�뜴�쐻占쎈윥筌묕옙 占쎈쐻占쎈윪�굢占쏙옙�쐻占쎈윪占쎄텑 占쎈탶�⑤슣維볟뜝�럥愿�
 		guestEntranceBtn = new JButton();
 		guestEntranceBtn.setText("Accept Guests");
 		guestEntranceBtn.addActionListener(this);
@@ -287,7 +290,7 @@ public void init() {
 		else if (operation.equals("serving") && table == 2)
 			return 7;
 		else if (operation.equals("clean") && table == 2) {
-			if (mp.getInfo(dj.workRobot())[0] < 300)
+			if (mp.getInfo(running_Robot)[0] < 300)
 				return 6;
 			else
 				return 7;
@@ -300,7 +303,7 @@ public void init() {
 		else if (operation.equals("serving") && table == 5)
 			return 12;
 		else if (operation.equals("clean") && table == 5) {
-			if (mp.getInfo(dj.workRobot())[0] < 300)
+			if (mp.getInfo(running_Robot)[0] < 300)
 				return 11;
 			else
 				return 12;
@@ -311,7 +314,7 @@ public void init() {
 
 	// Real-time updates
 	public void run() {
-		// �뛾�룇瑗띰옙沅뾶�뜝�럩逾좂춯濡녹삕 �뛾�룇瑗띰옙沅쀯옙�닱�뜝占� �뛾�룆�돹�굢占�
+		// 占쎈쎗占쎈즵�몭�씛�삕亦낅쓺占쎈쐻占쎈윪�얠쥉異�嚥〓끃�굲 占쎈쎗占쎈즵�몭�씛�삕亦낆���삕占쎈떛占쎈쐻�뜝占� 占쎈쎗占쎈즴占쎈뤉占쎄덩�뜝占�
 
 		while (true) {
 			Calendar time = Calendar.getInstance();
@@ -335,19 +338,19 @@ public void init() {
 		// TODO Auto-generated method stub
 
 		if (e.getSource() == guestEntranceBtn) {
-			// 占쎈쑏�뜝占� �뜝�럥占쎈���삕占쎈턄占쎈눀�뜝占� 嶺뚳퐢�샑野껓옙
+			// �뜝�럥�몡占쎈쐻�뜝占� 占쎈쐻占쎈윥�뜝�럥占쏙옙占쎌굲�뜝�럥�꼧�뜝�럥��占쎈쐻�뜝占� 癲ル슪�맊占쎌깙�뇦猿볦삕
 			for (int i = 0; i < 6; i++) {
 				if (table_state[i] == 0) {
-					// �뜝�럩逾� �뜝�럥占쎈���삕占쎈턄占쎈눀�뜝占� �뜝�럡�맂�뵓怨뚯뫊�뜝�룞�삕 �뜝�럡�맂�뇦爰용쳛塋딆뮀占썩뫅�삕 guest
-					// �뜝�럡臾멨뜝�럡�뎽. �뜝�럥占쎈���삕占쎈턄占쎈눀�뜝占� �뜝�럥�닶�뜝�럥裕�
-					// �뜝�럩�겱占쎈뎨占쎈맧裕� �뜝�럩逾у뜝�럥堉� �뜝�럩�굩�뜝�럥�몓 �뜝�럥�닡�뜝�럥六�
-					guest[i] = new Guest(i); // guest �뜝�럡臾멨뜝�럡�뎽, 占쎈／占쎈쐝�뵳怨ㅼ삕占쎈꼨
-					guest[i].start(); // guest thread �뜝�럥六삣뜝�럩�굚
-					table_state[i] = 1; // �뜝�럩�겱占쎈뎨�뜝占� 嶺뚢댙�삕
-					MapPane.table[i].setBackground(Color.LIGHT_GRAY); // 占쎌쁽�뵳占� 筌≪눖�뼄占쎈뮉 占쎈ご占쎈뻻 gui
+					// 占쎈쐻占쎈윪�억옙 占쎈쐻占쎈윥�뜝�럥占쏙옙占쎌굲�뜝�럥�꼧�뜝�럥��占쎈쐻�뜝占� 占쎈쐻占쎈윞占쎈쭆占쎈탶�⑤슣維딉옙�쐻占쎈짗占쎌굲 占쎈쐻占쎈윞占쎈쭆占쎈눇�댆�슜爾쎾죰�봿裕��뜝�뜦維낉옙�굲 guest
+					// 占쎈쐻占쎈윞�눧硫⑤쐻占쎈윞占쎈렰. 占쎈쐻占쎈윥�뜝�럥占쏙옙占쎌굲�뜝�럥�꼧�뜝�럥��占쎈쐻�뜝占� 占쎈쐻占쎈윥占쎈떢占쎈쐻占쎈윥獒뺧옙
+					// 占쎈쐻占쎈윪占쎄껑�뜝�럥�렓�뜝�럥留㎬짆占� 占쎈쐻占쎈윪�앗껊쐻占쎈윥�젆占� 占쎈쐻占쎈윪占쎄뎀占쎈쐻占쎈윥占쎈첆 占쎈쐻占쎈윥占쎈떋占쎈쐻占쎈윥筌묕옙
+					guest[i] = new Guest(i); // guest 占쎈쐻占쎈윞�눧硫⑤쐻占쎈윞占쎈렰, �뜝�럥竊뤷뜝�럥�맃占쎈뎨�ⓦ끉�굲�뜝�럥瑗�
+					guest[i].start(); // guest thread 占쎈쐻占쎈윥筌묒궍�쐻占쎈윪占쎄탾
+					table_state[i] = 1; // 占쎈쐻占쎈윪占쎄껑�뜝�럥�렓占쎈쐻�뜝占� 癲ル슓�뙔占쎌굲
+					MapPane.table[i].setBackground(Color.LIGHT_GRAY); // �뜝�럩�겱占쎈뎨�뜝占� 嶺뚢돦�닑占쎈펲�뜝�럥裕� �뜝�럥�걫�뜝�럥六� gui
 					break;
 				} else {
-					if (i == 5) { // �뜝�럥堉� 嶺뚢돦�닔占쎈さ嶺뚮〕�삕 嶺뚮쪇沅좄땻遺룹물�뜝占�.
+					if (i == 5) { // 占쎈쐻占쎈윥�젆占� 癲ル슓�룱占쎈땾�뜝�럥�걬癲ル슢�뺧옙�굲 癲ル슢履뉑쾮醫꾨빝�겫猷밸Ъ占쎈쐻�뜝占�.
 						JOptionPane.showMessageDialog(null, "The restaurant is full", "alert",
 								JOptionPane.WARNING_MESSAGE);
 					}
@@ -362,4 +365,4 @@ public void init() {
 	JButton guestEntranceBtn;
 
 	Guest[] guest;
-}
+}		

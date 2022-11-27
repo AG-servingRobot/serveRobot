@@ -28,7 +28,7 @@ public class MapPane extends JPanel implements ActionListener{
     TimerTask taskStop;
     
     //x, y Velocity
-    int xVel = 4, yVel = 4;
+    int xVel = 2, yVel = 2;
     //init x and y coordinate
     int x1 = 400, y1 = 80, x2 = 400, y2 = 80;
     //robot to be commanded
@@ -134,7 +134,7 @@ public class MapPane extends JPanel implements ActionListener{
         robot2[0] = temp2[0];
         robot2[1] = temp2[1];
         //set GUI timer
-        timer = new Timer(40, this);
+        timer = new Timer(10, this);
         //set util timer
         timerUtil = new java.util.Timer();
         //timer start

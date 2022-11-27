@@ -22,21 +22,20 @@ public class TablePanel extends JPanel{
 	public void paint(Graphics g){
 		
 		if (MainFrame.haveToClean[tableN]) {
-			g.drawImage(ImgToClean, 0, 0, null);	//Ä¡¿ö¾ßÇÒ¶§(ºó±×¸©)
+			g.drawImage(ImgToClean, 0, 0, null);	//Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½(ï¿½ï¿½×¸ï¿½)
 		}
-		//else
-		if (MainFrame.isServingDone[tableN]) {
-			g.drawImage(ImgServingDone, 0, 0, null);	//¼­ºù¿Ï·á(À½½Ä³ª¿È)
+		else if (MainFrame.isServingDone[tableN]) {
+			g.drawImage(ImgServingDone, 0, 0, null);	//ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½(ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½)
 		}
 		else if (MainFrame.isSettingDone[tableN]) {
-			g.drawImage(ImgSettingDone, 0, 0, null);	//¼¼ÆÃ¿Ï·á(¼öÀú¶û¹°ÄÅ)
+			g.drawImage(ImgSettingDone, 0, 0, null);	//ï¿½ï¿½ï¿½Ã¿Ï·ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 		}
 		else if (MainFrame.table_state[tableN] == 1) {
-			g.drawImage(ImgEmpty, 0, 0, null);	//Âø¼®¿Ï·á(Å×ÀÌºí¸¸)
+			g.drawImage(ImgEmpty, 0, 0, null);	//ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½(ï¿½ï¿½ï¿½Ìºï¿½)
 		}
 		else {
 			g.setColor(Color.WHITE);
-	    	g.fillRect(0, 0, 118, 58);	//¼Õ´Ô¾øÀ»¶§
+	    	g.fillRect(0, 0, 118, 58);	//ï¿½Õ´Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½
 		}
 
 	}
