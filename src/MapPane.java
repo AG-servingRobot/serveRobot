@@ -16,66 +16,57 @@ import javax.swing.JPanel;
 
 public class MapPane extends JPanel implements ActionListener{
 	public static Dijkstra dj = new Dijkstra();
-	final int PANEL_WIDTH = 600;
-    final int PANEL_HEIGHT = 580;
     
+	//images
     Image map, robot_front1, robot_back1, robot_front2, robot_back2;
     
+    //timer for GUI, for util
     javax.swing.Timer timer;
     java.util.Timer timerUtil;
     TimerTask task1;
     TimerTask task2;
     TimerTask taskStop;
     
-    int xVel = 1, yVel = 1;
-    
+    //x, y Velocity
+    int xVel = 4, yVel = 4;
+    //init x and y coordinate
     int x1 = 400, y1 = 80, x2 = 400, y2 = 80;
-    
+    //robot to be commanded
     int robot;
-    
+    //queue that stores the way the robot will go
     Queue<Point> way1 = new LinkedList<Point>();
     Queue<Point> way2 = new LinkedList<Point>();
-    
+    //point for queue
 	Point p1 = null;
 	Point p2 = null;
-	
+	//whether the robot is moving or not
+	//0 is not moving, 1 is moving
     int flag1 = 0, flag2 = 0;
-    
+    //Last coordinates in queue
     int[] temp1 = {400, 80}, temp2 = {400, 80};
-	
+	//destination coordinate
     int[] dest1, dest2;
-    
-    /*
-    public void stopTask(int num) {
-    	taskStop = new TimerTask() {
-    		@Override
-    		public void run() {
-    	    	timerUtil = new java.util.Timer();
-    	    	
-    		}
-    	};
-
-    	if(num == 1 && way1.isEmpty() == true) {
-    		tempTask(1);
-    	}
-    	else if(num == 2 && way2.isEmpty() == true) {
-    		tempTask(2);
-    	}
-    }
-    */
+    //returns to the waiting area
     public void tempTask(int num) {
+    	//robot's coordinate
     	int[] robot1 = {0,0}, robot2 = {0,0};
         robot1[0] = temp1[0];
         robot1[1] = temp1[1];
         robot2[0] = temp2[0];
         robot2[1] = temp2[1];
+        
+        //robot 1 returns to the waiting area
         task1 = new TimerTask() {
         	@Override
         	public void run() {
+        		//if there is no work for robot 1
         		if(way1.isEmpty() == true) {
+        			//dijkstra to waiting area
 	        		dj.init(1, robot1, robot2, 1);
+	        		//save result
 	        		int[][] position = { {0,}};
 	        		position = dj.list_result();
+	        		//push to queue, save last coordinate
 	        		for(int i = 0; i < position.length; i++) {
 	        			if(position[i][0] != 0 && position[i][1] != 0) {
 	        				way1.add(new Point(position[i][0], position[i][1]));
@@ -86,13 +77,18 @@ public class MapPane extends JPanel implements ActionListener{
 	        	}
         	}
         };
+        //robot 1 returns to the waiting area
         task2 = new TimerTask() {
         	@Override
         	public void run() {
+        		//if there is no work for robot 2
         		if(way2.isEmpty() == true) {
+        			//dijkstra to waiting area
 	        		dj.init(1, robot1, robot2, 2);
+	        		//save result
 	        		int[][] position = { {0,}};
 	        		position = dj.list_result();
+	        		//push to queue, save last coordinate
 	        		for(int i = 0; i < position.length; i++) {
 	        			if(position[i][0] != 0 && position[i][1] != 0) {
 	        				way2.add(new Point(position[i][0], position[i][1]));
@@ -103,93 +99,91 @@ public class MapPane extends JPanel implements ActionListener{
         		}
         	}
         };
+        //set util timer
     	timerUtil = new java.util.Timer();
+    	//if robot1 has no work
     	if(num == 1) {
+    		//until 3 seconds
     		timerUtil.schedule(task1, 3000);
     	}
+    	//if robot2 has no work
     	else if(num==2) {
+    		//until 3 seconds
     		timerUtil.schedule(task2, 3000);
     	}
     }
     
+    //initialize robot
     public MapPane() {
+    	//initialize map
         initComponents();
         robot_front1 = new ImageIcon("./images/robot1.png").getImage();
-        
+        //set robot1's coordinate
         x1 = x1 - robot_front1.getWidth(null)/2;
         y1 = y1 - robot_front1.getHeight(null)/2;
-//        System.out.println("dd" + x1 + y1);
-        
-        robot_back1 = new ImageIcon("./images/robot_back.png").getImage();
         
         robot_front2 = new ImageIcon("./images/robot2.png").getImage();
-        
+        //set robot2's coordinate
         x2 = x2 - robot_front2.getWidth(null)/2;
         y2 = y2 - robot_front2.getHeight(null)/2;
         
-        robot_back1 = new ImageIcon("./images/robot_back.png").getImage();
-        
+        //save robot's coordinate
         int[] robot1 = {0,0}, robot2 = {0,0};
         robot1[0] = temp1[0];
         robot1[1] = temp1[1];
         robot2[0] = temp2[0];
         robot2[1] = temp2[1];
-        timer = new Timer(1, this);
+        //set GUI timer
+        timer = new Timer(40, this);
+        //set util timer
         timerUtil = new java.util.Timer();
-        
-        
+        //timer start
         timer.start();
     }
     
+    //set the path for the robot to move
     public void setRobot(int robot, int[][] position, int[] dest) {
-    	//濡쒕큸�쓣 �씠�룞�떆�궡
-    	//robot : ��吏곸뿬�빞 �븯�뒗 濡쒕큸
-    	//position : �씠�룞 寃쎈줈 (醫뚰몴濡�)
-    	//dest : 理쒖쥌 紐⑹쟻吏� �젙蹂� (醫뚰몴濡�)
+    	//robot : robot to move
+    	//position : path to move
+    	//dest : destination
     	this.robot = robot;
     	
+    	//to move robot 1
     	if(robot == 1) {
-    		//this.flag1 = 1;
     		this.dest1 = dest;
+    		//save way
     		for(int i = 0; i < position.length; i++) {
     			if(position[i][0] != 0 && position[i][1] != 0) { 
 	    			this.way1.add(new Point(position[i][0], position[i][1]));
 	    			this.temp1[0] = position[i][0];
 	    			this.temp1[1] = position[i][1];
-
-	    			System.out.println("mapPane1 : " + position[i][0] +"," + position[i][1]);
-	    			System.out.println("destination1 : " + dest1[0] +","+dest1[1]);
     			}
     		}
     	}
-    	
+    	//to move robot 2
     	if(robot == 2) {
-    		//this.flag2 = 1;
     		this.dest2 = dest;
+    		//save way
     		for(int i = 0; i < position.length; i++) {
     			if(position[i][0] != 0 && position[i][1] != 0) { 
 	    			this.way2.add(new Point(position[i][0], position[i][1]));
 	    			this.temp2[0] = position[i][0];
 	    			this.temp2[1] = position[i][1];
-
-	    			System.out.println("mapPane2 : " + position[i][0] +"," + position[i][1]);
-	    			System.out.println("destination2 : " + dest2[0] +","+dest2[1]);
     			}
-    			//System.out.println("mapPane : " + temp2[0] +"," + temp2[1]);
     		}
     	}
     }
     
+    //get robot's coordinate(the last coordinate of the way)
     public int[] getInfo(int robot) {
-    	//濡쒕큸 �씠�룞寃쎈줈�쓽 留� �뮮 醫뚰몴 諛섑솚
-    	//robot : �뼸怨좎떢�� 濡쒕큸�쓽 踰덊샇
+    	//robot : robot to get information
     	int[] coordinate = new int[2];
-    	
+    	//robot1's coordinate
     	if(robot == 1) {
     		coordinate[0] = temp1[0];
     		coordinate[1] = temp1[1];
     	}
-    	
+    	//robot2's coordinate
     	if(robot == 2) {
     		coordinate[0] = temp2[0];
     		coordinate[1] = temp2[1];
@@ -198,36 +192,26 @@ public class MapPane extends JPanel implements ActionListener{
 		return coordinate;
     }
     
+    //if robot doesn't have a job
     public int isFree() {
-    	//�뼱�뼡 濡쒕큸�씠 �씪 �븞�븯怨� �엳�뒗吏� 諛섑솚
-    	if(way1.isEmpty() && !way2.isEmpty()) return 1; //1이 일을 안한다
-    	else if(way2.isEmpty() && !way1.isEmpty()) return 2; //2가 일을 안한다
-    	else if(way2.isEmpty() && way1.isEmpty()) return 3; //濡쒕큸 �몮�떎 �씪�씠 諛곗젙�릺吏� �븡�븯�쑝硫�
-    	else return 0; //�몮�떎 �씪�씠 諛곗젙�릺�뼱 �엳�쑝硫�
+    	//return robot's state
+    	if(way1.isEmpty() && !way2.isEmpty()) return 1; //if robot1 is not working
+    	else if(way2.isEmpty() && !way1.isEmpty()) return 2; //if robot2 is not working
+    	else if(way2.isEmpty() && way1.isEmpty()) return 3; //if both not working
+    	else return 0; //if both working
     }
     
+    //paint GUI
     public void paint(Graphics g){
     	super.paint(g);
-    	//mapPane 크占쏙옙
-    	//g.setColor(Color.LIGHT_GRAY);
-    	//g.drawRect(0, 0, getWidth(), getHeight());
-    	
-    	//占싱뱄옙占쏙옙 占쏙옙載� 占쏙옙치 확占쏙옙
-//    	g.setColor(Color.WHITE);
-//    	g.fillRect(0, 0, 600, 580);
-//    	g.setColor(Color.BLACK);
-//    	g.drawRect(0, 0, 600, 579);
-    	
-    	//占쏙옙 占싱뱄옙占쏙옙 (600*580)
-//    	java.awt.Image map = Toolkit.getDefaultToolkit().getImage("./images/map.png");
-//    	g.drawImage(map, 0, 0, 600, 580, this);
-    	
     	Graphics2D g2D = (Graphics2D) g;
+    	//draw robot1
     	g2D.drawImage(robot_front1, x1, y1, null);
-    	
+    	//draw robot2
     	g2D.drawImage(robot_front2, x2, y2, null);
     }
 
+    //actionevent for GUI timer
     @Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -236,63 +220,57 @@ public class MapPane extends JPanel implements ActionListener{
         robot1[1] = temp1[1];
         robot2[0] = temp2[0];
         robot2[1] = temp2[1];
-    	/*
-    	if(x > 600-robot_front1.getWidth(null) || x<0) {
-    		
-    	}
-		x1 = x1+xVel;
-		
-		if(y > 580-robot_front1.getHeight(null) || y<0) {
-    		
-    	}
-		y = y+yVel;
-		*/
-//    	System.out.println("占쏙옙占쏙옙占쏙옙: "+ temp1[0] + "," + temp1[1]);
-    	/*
-    	System.out.println("flag1 :" + flag1 +"flag2 : " + flag2);
-    	System.out.println("temp1 :" + temp1[0] + "," + temp1[1]);
-    	System.out.println("temp2 :" + temp2[0] + "," + temp2[1]);
-    	*/
+    	
+        //if robot 1 is not moving
     	if(flag1 == 0) {
+    		//get work from queue
         	p1 = way1.poll();
     	}
-    	
+    	//if robot 2 is not moving
     	if(flag2 == 0) {
+    		//get work from queue
     		p2 = way2.poll();
     	}
     	
-//    	System.out.println(p1);
-    	
+    	//if robot 1 has work
 		if(p1 != null) {
-//			System.out.println("占쏙옙占쏙옙x: " + p1.x + ", 占쏙옙占쏙옙x: " + (x1+robot_front1.getWidth(null)/2)
-//					+ ",占쏙옙占쏙옙 y: " + p1.y +", 占쏙옙占쏙옙 y: " +(y1+robot_front1.getHeight(null)/2));
-			
-			if(p1.x != (x1+robot_front1.getWidth(null)/2)) { //占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙치占쏙옙 x占쏙옙표占쏙옙 占쏙옙占쏙옙 占십다몌옙
+			//if x coordinate of the robot are not the path to move
+			if(p1.x != (x1+robot_front1.getWidth(null)/2)) {
+				//flag for the robot is moving
 				flag1 = 1;
 				
+				//if there is a road on the right
 				if((y1+robot_front1.getHeight(null)/2) == 80 ||
 						(y1+robot_front1.getHeight(null)/2) == 380) {
+					//if robot goes to the right
 					if(p1.x > (x1+robot_front1.getWidth(null)/2)) {
+						//increase the x-coordinate
 						x1=x1+xVel;
 					}
-					
+					//if robot goes to the left
 					else if(p1.x < (x1+robot_front1.getWidth(null)/2)) {
+						//decrease the x-coordinate
 						x1=x1-xVel;
 					}
 				}
 			}
+			//if y coordinate of the robot are not the path to move
 			if(p1.y != (y1+robot_front1.getHeight(null)/2)) {
+				//flag for the robot is moving
 				flag1 = 1;
 				
+				//if robot goes to the up
 				if(p1.y > (y1+robot_front1.getHeight(null)/2))
+					//increase the y-coordinate
 					y1 = y1+yVel;
-				
+				//if robot goes to the down
 				else if(p1.y < (y1+robot_front1.getHeight(null)/2))
+					//decrease the y-coordinate
 					y1 = y1-yVel;
 			}
 			if(p1.x == (x1+robot_front1.getWidth(null)/2) && p1.y == (y1+robot_front1.getHeight(null)/2)) {
+				//if robot arrive at the next coordinate, change the flag to 0
 				flag1 = 0;
-//				System.out.println("flag1 변경 :" + flag1);
 			}
 
 			if(dest1[0] == (x1+robot_front1.getWidth(null)/2) && dest1[1] == (y1+robot_front1.getHeight(null)/2)) {
@@ -330,39 +308,44 @@ public class MapPane extends JPanel implements ActionListener{
 					MainFrame.robot_table[0] = -1;
 					System.out.println("refull done");
 				}
-				
+				//After moving one route, check if there is work, if not, go to the waiting area
 				tempTask(1);
 			}
 			
 		}
-		else {			
-		}
 		
+		//if robot 1 has work
 		if(p2 != null) {
-			
-//			System.out.println("占쏙옙占쏙옙x: " + p2.x + ", 占쏙옙占쏙옙x: " + (x2+robot_front1.getWidth(null)/2)
-//					+ ",占쏙옙占쏙옙 y: " + p2.y +", 占쏙옙占쏙옙 y: " +(y2+robot_front1.getHeight(null)/2));
-			
-			if(p2.x != (x2+robot_front1.getWidth(null)/2)) { //占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙치占쏙옙 x占쏙옙표占쏙옙 占쏙옙占쏙옙 占십다몌옙
+			//if x coordinate of the robot are not the path to move
+			if(p2.x != (x2+robot_front1.getWidth(null)/2)) { 
+				//flag for the robot is moving
 				flag2 = 1;
-				
+				//if there is a road on the right
 				if((y2+robot_front1.getHeight(null)/2) == 80 ||
 						(y2+robot_front1.getHeight(null)/2) == 380) {
+					//if robot goes to the right
 					if(p2.x > (x2+robot_front1.getWidth(null)/2)) {
+						//increase the x-coordinate
 						x2=x2+xVel;
 					}
-					
+					//if robot goes to the left
 					else if(p2.x < (x2+robot_front1.getWidth(null)/2)) {
+						//decrease the x-coordinate
 						x2=x2-xVel;
 					}
 				}
 			}
+			//if y coordinate of the robot are not the path to move
 			if(p2.y != (y2+robot_front1.getHeight(null)/2)) {
+				//flag for the robot is moving
 				flag2 = 1;
+				//if robot goes to the up
 				if(p2.y > (y2+robot_front1.getHeight(null)/2))
+					//increase the y-coordinate
 					y2 = y2+yVel;
-				
+				//if robot goes to the down
 				else if(p2.y < (y2+robot_front1.getHeight(null)/2))
+					//decrease the y-coordinate
 					y2 = y2-yVel;
 			}
 			if(p2.x == (x2+robot_front1.getWidth(null)/2) && p2.y == (y2+robot_front1.getHeight(null)/2)) {
@@ -401,10 +384,11 @@ public class MapPane extends JPanel implements ActionListener{
 					MainFrame.robot_table[1] = -1;
 				}
 				
-				
+				//After moving one route, check if there is work, if not, go to the waiting area
 				tempTask(2);
 			}
 		}
+		//repaint GUI
 		repaint();
 	}
     
