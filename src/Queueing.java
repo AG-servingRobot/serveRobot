@@ -1,4 +1,3 @@
-package Algorithm;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -36,6 +35,13 @@ public class Queueing {
 	// rearrange the Queues according to priority.
 	public static void priority() {
 
+		// if all queue is empty so this operation is the lowest priority
+		if (dish <= 3 && !Queue.contains("refull.0")) {
+			// dish is
+			Queue.add("refull.0");
+			System.out.println("! 큐에 push: refull 해야함");
+		}
+		
 		// the highest priority "refull", if all dish is zero
 		if (dish == 0 && !priority_Queue.isEmpty() && priority_Queue.contains("refull.0")
 				&& priority_Queue.element() != "refull.0")// dish is zero then do 1st
@@ -62,13 +68,7 @@ public class Queueing {
 				Queue.remove("refull.0");
 			priority_Queue.add("refull.0");
 		}	
-		// if all queue is empty so this operation is the lowest priority
-		else if (dish <= 3 &&!Queue.contains("refull.0")&&state()==1)
-		{
-			// dish is
-			Queue.add("refull.0");
-		}
-			
+		
 
 		// setting the 2nd, 3rd priority "setting" or "serving"
 		// In one table, Necessarily "setting" > "serving"
@@ -104,6 +104,7 @@ public class Queueing {
 
 		// Find the following operation in order of priority
 		while (true) {
+			Queueing.priority();//rearrange queue
 			Thread.sleep(10);// if queue is empty other robot get operation then opr == null
 								// opr == null, loop (exceptional case)
 			if (!priority_Queue.isEmpty()) {

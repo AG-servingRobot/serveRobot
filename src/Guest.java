@@ -57,7 +57,6 @@ public class Guest extends Thread{
 		
 		// �걧�뿉 setting push
 		Queueing.init("setting.", tableNum);
-		Queueing.dish -= 1;
 		// �빆�긽 init �썑�뿉 priority �샇異�. init() �븞�뿉 吏곸젒 �꽔�뼱�몺.
 		System.out.println("! 큐에 push: " + String.valueOf(this.tableNum) + "번 테이블 세팅");
 		

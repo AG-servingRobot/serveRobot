@@ -1,3 +1,4 @@
+
 public class Dijkstra {
 	private int n = 12; //number of nodes
 	private int[][] Graph; //store 1 if the nodes are connected
@@ -134,7 +135,7 @@ public class Dijkstra {
 					}
 				}
 			}
-			System.out.println("minNode ::::: " + minNode);
+			
 			//visit that node
 			visited[minNode] = true;
 			
@@ -160,13 +161,15 @@ public class Dijkstra {
 		if(robot_status == 1 || robot_status == 2) {
 			return robot_status-1;
 		}
+		else {
+			//return the closer robot's number
+			if(distance[robot1]> distance[robot2]) {
+	    		return 1;
+	    	}
+	    	else
+	    		return 0;
+		}
 		
-		//return the closer robot's number
-		if(distance[robot1]> distance[robot2]) {
-    		return 1;
-    	}
-    	else
-    		return 0;
 	}
 	
 	//change the list stored by node number to coordinate value
