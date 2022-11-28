@@ -22,20 +22,20 @@ public class TablePanel extends JPanel{
 	public void paint(Graphics g){
 		
 		if (MainFrame.haveToClean[tableN]) {
-			g.drawImage(ImgToClean, 0, 0, null);	//ġ�����Ҷ�(��׸�)
+			g.drawImage(ImgToClean, 0, 0, null);	// empty dishes. have to clean.
 		}
 		else if (MainFrame.isServingDone[tableN]) {
-			g.drawImage(ImgServingDone, 0, 0, null);	//�����Ϸ�(���ĳ���)
+			g.drawImage(ImgServingDone, 0, 0, null);	// food dishes. serving done.
 		}
 		else if (MainFrame.isSettingDone[tableN]) {
-			g.drawImage(ImgSettingDone, 0, 0, null);	//���ÿϷ�(����������)
+			g.drawImage(ImgSettingDone, 0, 0, null);	// spoon and chopsticks. setting done.
 		}
 		else if (MainFrame.table_state[tableN] == 1) {
-			g.drawImage(ImgEmpty, 0, 0, null);	//�����Ϸ�(���̺�)
+			g.drawImage(ImgEmpty, 0, 0, null);	// wood table. guest came.
 		}
 		else {
 			g.setColor(Color.WHITE);
-	    	g.fillRect(0, 0, 118, 58);	//�մԾ�����
+	    	g.fillRect(0, 0, 118, 58);	// just white. no guest.
 		}
 
 	}

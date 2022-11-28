@@ -39,7 +39,7 @@ public class Queueing {
 		if (dish <= 3 && !Queue.contains("refull.0")) {
 			// dish is
 			Queue.add("refull.0");
-			System.out.println("! 큐에 push: refull 해야함");
+			System.out.println("! push: refull");
 		}
 		
 		// the highest priority "refull", if all dish is zero

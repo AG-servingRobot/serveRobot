@@ -223,7 +223,7 @@ public class MainFrame extends JFrame implements Runnable, ActionListener {
 		// initialize GUI
 
 		// set minimum size of frame(window)
-		double magn = 1080 / Toolkit.getDefaultToolkit().getScreenSize().getHeight(); // 占쎈쐻占쎈윪占쎄섀癲ル슢�닪�뜝�뜴泥롳옙�땬占쎌굲�뜝�럥泥�
+		double magn = 1080 / Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		double minX = 1000 * magn;
 		double minY = 722 * magn; // (580+40+60)+42
 		setMinimumSize(new Dimension((int) minX, (int) minY));
@@ -351,11 +351,5 @@ public class MainFrame extends JFrame implements Runnable, ActionListener {
 	JLabel timeTestLabel;
 	JButton guestEntranceBtn;
 	
-	private static class SingletonForMainFrame {
-		private static final MainFrame instance = new MainFrame();
-	}
-	public static MainFrame getInstance() {
-		return SingletonForMainFrame.instance;
-	}
 	
 }		
