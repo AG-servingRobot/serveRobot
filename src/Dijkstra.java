@@ -254,6 +254,8 @@ public class Dijkstra {
             route[k] = 0;
          }
          int index = i;
+         
+         route[0] = robots[Robot];
          int j = 1;
          while(true) {
             
