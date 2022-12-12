@@ -16,7 +16,7 @@ public class Guest extends Thread{
 	int[] endStay = {0, 0};		// when guest leaves
 	int[] temp = {0, 0};
 	int satisfaction;	// depends on how long guest wait
-	static final int LIMIT = 90;	// limit time for waiting. to hurry.
+	static final int LIMIT = 60;	// limit time for waiting. to hurry.
 
 
 	public Guest(int num)
@@ -39,8 +39,8 @@ public class Guest extends Thread{
 		Random random = new Random();
 		//random.nextInt(max - min) + min; //min ~ max
 		
-		this.timeToCook = random.nextInt(240 - 120) + 120;	// 2 ~ 4 minutes 
-		this.timeToStay = random.nextInt(420 - 300) + 300;	// 5 ~ 7 minutes 
+		this.timeToCook = random.nextInt(180 - 60) + 60;	// 2 ~ 4 minutes 
+		this.timeToStay = random.nextInt(240 - 120) + 120;	// 5 ~ 7 minutes 
 		
 		this.timeToCook = timeToCook / 10;	// 10x speed
 		this.timeToStay = timeToStay / 10;

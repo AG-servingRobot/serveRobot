@@ -83,6 +83,22 @@ public class Queueing {
 				message = null;// main.message = null;
 			}
 		}
+		
+		// for debugging
+		System.out.println();
+		System.out.println("priority Queue ------- ");
+		if (!priority_Queue.isEmpty()) {
+			System.out.println("1 " + priority_Queue);
+		} 
+		if (!clean_Queue.isEmpty()) {
+			System.out.println("2 " + clean_Queue);
+		}
+		if (!Queue.isEmpty()) {
+			System.out.println("3 " + Queue);
+		}
+		System.out.println("---------------------- ");
+		System.out.println();
+		
 	}
 
 	// input operation in queues
