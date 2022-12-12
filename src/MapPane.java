@@ -11,7 +11,6 @@ import java.awt.Point;
 import javax.swing.JPanel;
 
 public class MapPane extends JPanel {
-//	public static Dijkstra dj = new Dijkstra();
 	static final int ROBOT_WIDTH = 80;
 	static final int ROBOT_HEIGHT = 80;
 
@@ -21,7 +20,7 @@ public class MapPane extends JPanel {
 	//timer for Robot Moving GUI
 	java.util.Timer r1Timer;
 	java.util.Timer r2Timer;
-	
+
 	//timer for robot's back place
 	java.util.Timer timerUtil;
 	TimerTask task1;
@@ -30,7 +29,7 @@ public class MapPane extends JPanel {
 	//x, y Velocity
 	int xVel = 2, yVel = 2;
 	//init x and y coordinate
-	int x1 = 400, y1 = 80, x2 = 400, y2 = 80;
+	int x1 = 200, y1 = 80, x2 = 200, y2 = 80;
 	//robot to be commanded
 	int robot;
 	//queue that stores the way the robot will go
@@ -43,9 +42,12 @@ public class MapPane extends JPanel {
 	//0 is not moving, 1 is moving
 	int flag1 = 0, flag2 = 0;
 	//Last coordinates in queue
-	int[] temp1 = {400, 80}, temp2 = {400, 80};
+	//	int[] temp1 = {200, 80}, temp2 = {200, 80};
 	//destination coordinate
-	int[] dest1, dest2;
+	//	int[] dest1, dest2;
+
+	Queue<Point> dest_queue1 = new LinkedList<Point>();
+	Queue<Point> dest_queue2 = new LinkedList<Point>();
 
 
 	//initialize robot
@@ -63,25 +65,11 @@ public class MapPane extends JPanel {
 		x2 = x2 - ROBOT_WIDTH/2;
 		y2 = y2 - ROBOT_HEIGHT/2;
 
-//		//save robot's coordinate
-//		int[] robot1 = {0,0}, robot2 = {0,0};
-//		robot1[0] = temp1[0];
-//		robot1[1] = temp1[1];
-//		robot2[0] = temp2[0];
-//		robot2[1] = temp2[1];
-
-		//set GUI timer
-		//        timer = new Timer(10, this);
 		//set Robot Moving GUI timer
 		r1Timer = new java.util.Timer();
 		r2Timer = new java.util.Timer();
 		r1Timer.scheduleAtFixedRate(r1Task, 10, 10);
 		r2Timer.scheduleAtFixedRate(r2Task, 10, 10);
-
-		//set util timer
-		//        timerUtil = new java.util.Timer();
-		//timer start
-		//        timer.start();
 	}
 
 
@@ -94,27 +82,35 @@ public class MapPane extends JPanel {
 
 		//to move robot 1
 		if(robot == 1) {
-			this.dest1 = dest;
+			//         this.dest1 = dest;
 			//save way
 			for(int i = 0; i < position.length; i++) {
-				if(position[i][0] != 0 && position[i][1] != 0) { 
-					this.way1.add(new Point(position[i][0], position[i][1]));
-					this.temp1[0] = position[i][0];
-					this.temp1[1] = position[i][1];
-				}
+				this.way1.add(new Point(position[i][0], position[i][1]));
+				//					               this.temp1[0] = position[i][0];
+				//					               this.temp1[1] = position[i][1];
+
+
 			}
+			System.out.println("way1 " + way1);
+			//여기서 큐에 저장!
+			dest_queue1.add(new Point(dest[0], dest[1]));
+			System.out.println("destQ1 " + dest_queue1);
 		}
+
 		//to move robot 2
 		if(robot == 2) {
-			this.dest2 = dest;
+			//         this.dest2 = dest;
 			//save way
 			for(int i = 0; i < position.length; i++) {
-				if(position[i][0] != 0 && position[i][1] != 0) { 
-					this.way2.add(new Point(position[i][0], position[i][1]));
-					this.temp2[0] = position[i][0];
-					this.temp2[1] = position[i][1];
-				}
+				this.way2.add(new Point(position[i][0], position[i][1]));
+				//					               this.temp2[0] = position[i][0];
+				//					               this.temp2[1] = position[i][1];
+
 			}
+			System.out.println("way2 " + way2);
+			//여기서 큐에 저장!
+			dest_queue2.add(new Point(dest[0], dest[1]));
+			System.out.println("destQ2 " + dest_queue2);
 		}
 	}
 
@@ -124,29 +120,70 @@ public class MapPane extends JPanel {
 		int[] coordinate = new int[2];
 		//robot1's coordinate
 		if(robot == 1) {
-			coordinate[0] = temp1[0];
-			coordinate[1] = temp1[1];
+			//         coordinate[0] = temp1[0];
+			//         coordinate[1] = temp1[1];
+
+			Point p = dest_queue1.peek();
+			Point wp = way1.peek();
+			if (p != null) {
+				coordinate[0] = p.x;
+				coordinate[1] = p.y;
+			}
+			else if (wp != null) {
+				coordinate[0] = wp.x;
+				coordinate[1] = wp.y;	
+			}
+			else {
+				coordinate[0] = x1;
+				coordinate[1] = y1;	
+			}
+
+			//			coordinate[0] = x1;
+			//			coordinate[1] = y1;
 		}
+
 		//robot2's coordinate
 		if(robot == 2) {
-			coordinate[0] = temp2[0];
-			coordinate[1] = temp2[1];
+			//         coordinate[0] = temp2[0];
+			//         coordinate[1] = temp2[1];
+
+			Point p = dest_queue2.peek();
+			Point wp = way2.peek();
+			if (p != null) {
+				coordinate[0] = p.x;
+				coordinate[1] = p.y;
+			}
+			else if (wp != null) {
+				coordinate[0] = wp.x;
+				coordinate[1] = wp.y;	
+			}
+			else {
+				coordinate[0] = x2;
+				coordinate[1] = y2;	
+			}
+			//			coordinate[0] = x2;
+			//			coordinate[1] = y2;
 		}
 
 		return coordinate;
 	}
 
-	
+
 	//if robot doesn't have a job
 	public int isFree() {
 		//return robot's state
-		if(way1.isEmpty() && !way2.isEmpty()) return 1; //if robot1 is not working
-		else if(way2.isEmpty() && !way1.isEmpty()) return 2; //if robot2 is not working
-		else if(way2.isEmpty() && way1.isEmpty()) return 3; //if both not working
+		//		if(way1.isEmpty() && !way2.isEmpty()) return 1; //if robot1 is not working
+		//		else if(way2.isEmpty() && !way1.isEmpty()) return 2; //if robot2 is not working
+		//		else if(way2.isEmpty() && way1.isEmpty()) return 3; //if both not working
+		//		else return 0; //if both working
+
+		if(dest_queue1.isEmpty() && !dest_queue2.isEmpty()) return 1; //if robot1 is not working
+		else if(dest_queue2.isEmpty() && !dest_queue1.isEmpty()) return 2; //if robot2 is not working
+		else if(dest_queue1.isEmpty() && dest_queue2.isEmpty()) return 3; //if both not working
 		else return 0; //if both working
 	}
 
-	
+
 	//paint GUI
 	public void paint(Graphics g){
 		super.paint(g);
@@ -157,19 +194,36 @@ public class MapPane extends JPanel {
 		g2D.drawImage(robot_front2, x2, y2, null);
 	}
 
-	
+
 	//task for Robot1 Moving GUI timer
 	TimerTask r1Task = new TimerTask() {
 		@Override
 		public synchronized void run() {
-			int[] robot1 = {0,0};
-			robot1[0] = temp1[0];
-			robot1[1] = temp1[1];
+//			int[] robot1 = {0,0};
+
+
+
+			//			if(dest_queue1.isEmpty())
+			//				return;
+
+
+			//dest_queue에 목적지 순서대로 넣고 여기서 뺴서 하나씩 쓰기
+			//			System.out.println("robot1 "+dest_queue1);
+
+			//			robot1[0] = dest_queue1.element().x;
+			//			robot1[1] = dest_queue1.element().y;
+
+			//System.out.println("목적지: "+robot1[0]+", "+robot1[1]+"[1]");
+
+
 
 			//if robot 1 is not moving
 			if(flag1 == 0) {
 				//get work from queue
 				p1 = way1.poll();
+				if (p1 != null) {
+					System.out.println("p1 " + p1);
+				}
 			}
 
 			//if robot 1 has work
@@ -214,47 +268,55 @@ public class MapPane extends JPanel {
 					flag1 = 0;
 				}
 
-				if(dest1[0] == (x1 + ROBOT_WIDTH/2) && dest1[1] == (y1 + ROBOT_HEIGHT/2)) {
-					// robot1 arrived to destination.
-					System.out.println("도착");
-					// what is done?
-					if (!(dest1[0] == 200 && dest1[1] == 80) && MainFrame.robot_doing[0].equals("setting")) {	// destination is not settingBar
-						MainFrame.isSettingDone[MainFrame.robot_table[0] - 1] = true;	// setting done
-						MapPane.table[MainFrame.robot_table[0] - 1].repaint();	// repaint the table
-						MainFrame.robot_doing[0] = "";	// reset
-						MainFrame.robot_table[0] = -1;
-						System.out.println("setting done");
+				Point dp = dest_queue1.peek();
+				if (dp != null) {
+					if(dp.x == (x1 + ROBOT_WIDTH/2) && dp.y == (y1 + ROBOT_HEIGHT/2)) {
+						// robot1 arrived to destination.
+						System.out.println("1도착");
+
+						// what is done?
+						if (!(dp.x == 200 && dp.y == 80) && MainFrame.robot_doing[0].equals("setting")) {   // destination is not settingBar
+							MainFrame.isSettingDone[MainFrame.robot_table[0] - 1] = true;   // setting done
+							MapPane.table[MainFrame.robot_table[0] - 1].repaint();   // repaint the table
+							MainFrame.robot_doing[0] = "";   // reset
+							MainFrame.robot_table[0] = -1;
+							System.out.println("1 setting done");
+						}
+						else if (!(dp.x == 400 && dp.y == 80) && MainFrame.robot_doing[0].equals("serving")) {   // destination is not kitchen
+							MainFrame.isServingDone[MainFrame.robot_table[0] - 1] = true;   // serving done
+							MapPane.table[MainFrame.robot_table[0] - 1].repaint();   // repaint the table
+							MainFrame.robot_doing[0] = "";   // reset
+							MainFrame.robot_table[0] = -1;
+							System.out.println("1 serving done");
+						}
+						else if (MainFrame.robot_doing[0].equals("clean")) {
+							MainFrame.table_state[MainFrame.robot_table[0] - 1] = 0;   // guest can come
+							MainFrame.haveToClean[MainFrame.robot_table[0] - 1] = false;   // reset
+							MapPane.table[MainFrame.robot_table[0] - 1].repaint();   // repaint the table
+							MapPane.state[MainFrame.robot_table[0] - 1].setText("");   // reset
+							MainFrame.isSettingDone[MainFrame.robot_table[0] - 1] = false;
+							MainFrame.isServingDone[MainFrame.robot_table[0] - 1] = false;
+							MainFrame.robot_doing[0] = "";
+							MainFrame.robot_table[0] = -1;
+							System.out.println("1 clean done");
+						}   
+						else if (!(dp.x == 400 && dp.y == 80) && MainFrame.robot_doing[0].equals("refull")) {      // destination is not kitchen
+							Queueing.dish = 5;   //   refull
+							MainFrame.robot_doing[0] = "";   // reset
+							MainFrame.robot_table[0] = -1;
+							System.out.println("1 refull done");
+						}
+						else {
+
+						}
+
+						//After moving one route, check if there is work, if not, go to the waiting area
+						tempTask(1);
+						dest_queue1.remove();
+						System.out.println("1도착후 지우고 나서 큐 : " + dest_queue1);
 					}
-					else if (!(dest1[0] == 400 && dest1[1] == 80) && MainFrame.robot_doing[0].equals("serving")) {	// destination is not kitchen
-						MainFrame.isServingDone[MainFrame.robot_table[0] - 1] = true;	// serving done
-						MapPane.table[MainFrame.robot_table[0] - 1].repaint();	// repaint the table
-						MainFrame.robot_doing[0] = "";	// reset
-						MainFrame.robot_table[0] = -1;
-						System.out.println("serving done");
-					}
-					else if (MainFrame.robot_doing[0].equals("clean")) {
-						MainFrame.table_state[MainFrame.robot_table[0] - 1] = 0;	// guest can come
-						MainFrame.haveToClean[MainFrame.robot_table[0] - 1] = false;	// reset
-						MapPane.table[MainFrame.robot_table[0] - 1].repaint();	// repaint the table
-						MapPane.state[MainFrame.robot_table[0] - 1].setText("");	// reset
-						MainFrame.isSettingDone[MainFrame.robot_table[0] - 1] = false;
-						MainFrame.isServingDone[MainFrame.robot_table[0] - 1] = false;
-						MainFrame.robot_doing[0] = "";
-						MainFrame.robot_table[0] = -1;
-						System.out.println("clean done");
-					}	
-					else if (!(dest1[0] == 400 && dest1[1] == 80) && MainFrame.robot_doing[0].equals("refull")) {		// destination is not kitchen
-						Queueing.dish = 5;	//	refull
-						MainFrame.robot_doing[0] = "";	// reset
-						MainFrame.robot_table[0] = -1;
-						System.out.println("refull done");
-					}
-					else {
-						System.out.println("로봇1-  "+"현재x: " + String.valueOf(x1+40) + " 현재y: " + String.valueOf(y1+40)+"   목적지x: " + String.valueOf(dest1[0]) + " 목적지y: " + String.valueOf(dest1[1]));
-					}
-					//After moving one route, check if there is work, if not, go to the waiting area
-					tempTask(1);
 				}
+
 			}
 			//repaint GUI
 			MainFrame.mp.repaint();
@@ -266,14 +328,29 @@ public class MapPane extends JPanel {
 	TimerTask r2Task = new TimerTask() {
 		@Override
 		public synchronized void run() {
-			int[] robot2 = {0,0};
-			robot2[0] = temp2[0];
-			robot2[1] = temp2[1];
+//			int[] robot2 = {0,0};
+			//         robot2[0] = temp2[0];
+			//         robot2[1] = temp2[1];
+
+
+			//			if(dest_queue2.isEmpty())
+			//				return;
+
+
+			//dest_queue에 목적지 순서대로 넣고 여기서 뺴서 하나씩 쓰기
+			//			System.out.println(dest_queue2);
+
+			//			robot2[0] = dest_queue2.element().x;
+			//			robot2[1] = dest_queue2.element().y;
+			//System.out.println("목적지: "+robot2[0]+", "+robot2[1]+"[2]");
 
 			//if robot 2 is not moving
 			if(flag2 == 0) {
 				//get work from queue
 				p2 = way2.poll();
+				if (p2 != null) {
+					System.out.println("p2 " + p2);
+				}
 			}
 
 			//if robot 1 has work
@@ -311,45 +388,56 @@ public class MapPane extends JPanel {
 						y2 = y2-yVel;
 				}
 				if(p2.x == (x2 + ROBOT_WIDTH/2) && p2.y == (y2 + ROBOT_HEIGHT/2)) {
-					//				System.out.println("flag2 변경" + flag2);
+					//            System.out.println("flag2 蹂寃? + flag2);
 					flag2 = 0;
 				}
 
-				if(dest2[0] == (x2 + ROBOT_WIDTH/2) && dest2[1] == (y2 + ROBOT_HEIGHT/2)) {
-					// robot2 arrived to destination.
 
-					// what is done?
-					if (!(dest2[0] == 200 && dest2[1] == 80) && MainFrame.robot_doing[1].equals("setting")) {	// destination is not settingBar
-						MainFrame.isSettingDone[MainFrame.robot_table[1] - 1] = true;	// setting done
-						MapPane.table[MainFrame.robot_table[1] - 1].repaint();	// repaint the table
-						MainFrame.robot_doing[1] = "";	// reset
-						MainFrame.robot_table[1] = -1;
+				Point dp = dest_queue2.peek();
+				if (dp != null) {
+					if(dp.x == (x2 + ROBOT_WIDTH/2) && dp.y == (y2 + ROBOT_HEIGHT/2)) {
+						// robot2 arrived to destination.
+						System.out.println("2도착");
+						// what is done?
+						if (!(dp.x == 200 && dp.y == 80) && MainFrame.robot_doing[1].equals("setting")) {   // destination is not settingBar
+							MainFrame.isSettingDone[MainFrame.robot_table[1] - 1] = true;   // setting done
+							MapPane.table[MainFrame.robot_table[1] - 1].repaint();   // repaint the table
+							MainFrame.robot_doing[1] = "";   // reset
+							MainFrame.robot_table[1] = -1;
+							System.out.println("2 setting done");
+						}
+						else if (!(dp.x == 400 && dp.y == 80) && MainFrame.robot_doing[1].equals("serving")) {   // destination is not kitchen
+							MainFrame.isServingDone[MainFrame.robot_table[1] - 1] = true;   // serving done
+							MapPane.table[MainFrame.robot_table[1] - 1].repaint();   // repaint the table
+							MainFrame.robot_doing[1] = "";   // reset
+							MainFrame.robot_table[1] = -1;
+							System.out.println("2 serving done");
+						}
+						else if (MainFrame.robot_doing[1].equals("clean")) {
+							MainFrame.table_state[MainFrame.robot_table[1] - 1] = 0;   // guest can come
+							MainFrame.haveToClean[MainFrame.robot_table[1] - 1] = false;   // reset
+							MapPane.table[MainFrame.robot_table[1] - 1].repaint();   // repaint the table
+							MapPane.state[MainFrame.robot_table[1] - 1].setText("");   // reset
+							MainFrame.isSettingDone[MainFrame.robot_table[1] - 1] = false;
+							MainFrame.isServingDone[MainFrame.robot_table[1] - 1] = false;
+							MainFrame.robot_doing[1] = "";
+							MainFrame.robot_table[1] = -1;
+							System.out.println("2 clean done");
+						}
+						else if (!(dp.x == 400 && dp.y == 80) && MainFrame.robot_doing[1].equals("refull")) {      // destination is not kitchen
+							Queueing.dish = 5;   //   refull
+							MainFrame.robot_doing[1] = "";   // reset
+							MainFrame.robot_table[1] = -1;
+							System.out.println("2 refull done");
+						}
+						else {
+
+						}
+						//After moving one route, check if there is work, if not, go to the waiting area
+						tempTask(2);
+						dest_queue2.remove();
+						System.out.println("2도착후 지우고 나서 큐 : " + dest_queue2);
 					}
-					else if (!(dest2[0] == 400 && dest2[1] == 80) && MainFrame.robot_doing[1].equals("serving")) {	// destination is not kitchen
-						MainFrame.isServingDone[MainFrame.robot_table[1] - 1] = true;	// serving done
-						MapPane.table[MainFrame.robot_table[1] - 1].repaint();	// repaint the table
-						MainFrame.robot_doing[1] = "";	// reset
-						MainFrame.robot_table[1] = -1;
-					}
-					else if (MainFrame.robot_doing[1].equals("clean")) {
-						MainFrame.table_state[MainFrame.robot_table[1] - 1] = 0;	// guest can come
-						MainFrame.haveToClean[MainFrame.robot_table[1] - 1] = false;	// reset
-						MapPane.table[MainFrame.robot_table[1] - 1].repaint();	// repaint the table
-						MapPane.state[MainFrame.robot_table[1] - 1].setText("");	// reset
-						MainFrame.isSettingDone[MainFrame.robot_table[1] - 1] = false;
-						MainFrame.isServingDone[MainFrame.robot_table[1] - 1] = false;
-						MainFrame.robot_doing[1] = "";
-						MainFrame.robot_table[1] = -1;
-					}else if (!(dest2[0] == 400 && dest2[1] == 80) && MainFrame.robot_doing[1].equals("refull")) {		// destination is not kitchen
-						Queueing.dish = 5;	//	refull
-						MainFrame.robot_doing[1] = "";	// reset
-						MainFrame.robot_table[1] = -1;
-					}
-					else {
-//						System.out.println("로봇2-  "+"현재x: " + String.valueOf(x1+40) + " 현재y: " + String.valueOf(y1+40)+"   목적지x: " + String.valueOf(dest1[0]) + " 목적지y: " + String.valueOf(dest1[1]));
-					}
-					//After moving one route, check if there is work, if not, go to the waiting area
-					tempTask(2);
 				}
 			}
 			//repaint GUI
@@ -364,10 +452,16 @@ public class MapPane extends JPanel {
 	public void tempTask(int num) {
 		//robot's coordinate
 		int[] robot1 = {0,0}, robot2 = {0,0};
-		robot1[0] = temp1[0];
-		robot1[1] = temp1[1];
-		robot2[0] = temp2[0];
-		robot2[1] = temp2[1];
+		Point p = dest_queue1.peek();
+		if (p != null) {
+			robot1[0] = p.x;
+			robot1[1] = p.y;
+		}
+		p = dest_queue2.peek();
+		if (p != null) {
+			robot2[0] = p.x;
+			robot2[1] = p.y;
+		}
 
 		//robot 1 returns to the waiting area
 		task1 = new TimerTask() {
@@ -382,13 +476,15 @@ public class MapPane extends JPanel {
 					position = MainFrame.dj.list_result();
 					//push to queue, save last coordinate
 					for(int i = 0; i < position.length; i++) {
-						if(position[i][0] != 0 && position[i][1] != 0) {
+						
 							way1.add(new Point(position[i][0], position[i][1]));
-							temp1[0] = position[i][0];
-							temp1[1] = position[i][1];
-						}
+							//                     temp1[0] = position[i][0];
+							//                     temp1[1] = position[i][1];
 					}
+					System.out.println("집으로 가는 way1 " + way1);
 				}
+//				dest_queue1.remove();
+//				System.out.println("1도착후 지우고 나서 큐 : " + dest_queue1);
 			}
 		};
 		//robot 1 returns to the waiting area
@@ -404,13 +500,15 @@ public class MapPane extends JPanel {
 					position = MainFrame.dj.list_result();
 					//push to queue, save last coordinate
 					for(int i = 0; i < position.length; i++) {
-						if(position[i][0] != 0 && position[i][1] != 0) {
+						
 							way2.add(new Point(position[i][0], position[i][1]));
-							temp2[0] = position[i][0];
-							temp2[1] = position[i][1];
-						}
+							//                     temp2[0] = position[i][0];
+							//                     temp2[1] = position[i][1];
 					}
+					System.out.println("집으로 가는 way2 " + way2);
 				}
+//				dest_queue2.remove();
+//				System.out.println("2도착후 지우고 나서 큐 : " + dest_queue2);
 			}
 		};
 		//set util timer
